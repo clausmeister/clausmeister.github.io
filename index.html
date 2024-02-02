@@ -30,7 +30,8 @@
     <h1 id="displayText">Loading...</h1>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var text = window.location.pathname.replace('/', '') || '???';
+            const queryParams = new URLSearchParams(window.location.search);
+            const text = queryParams.get('text') || '???';
             document.getElementById('displayText').textContent = text;
         });
     </script>
