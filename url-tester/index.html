@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Controlled Text Display</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            font-family: 'Fira Code', 'SF Mono', 'Roboto Mono', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+        }
+        h1, #clock {
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0 10px;
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+        }
+        h1 {
+            font-size: calc(5vw + 2vh); /* Initial dynamic size */
+        }
+        #clock {
+            font-size: calc(2vw + 1vh);
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="displayText">Loading...</h1>
+    <div id="clock">00:00:00</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const queryParams = new URLSearchParams(window.location.search);
+            const text = queryParams.get('text') || 'use query param `?text=hello_world` to display any text';
+            document.getElementById('displayText').textContent = text;
+
+            function updateClock() {
+                const now = new Date();
+                // Date formatting options
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const date = now.toLocaleDateString('de-DE', options); // Adjust the locale as needed
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                // Updating the clock element with date and time, including a line break
+                document.getElementById('clock').innerHTML = `${date} <br> ${hours}:${minutes}:${seconds}`;
+            }
+
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            resizeText(); // Call resizeText to adjust the text size initially
+        });
+
+        function resizeText() {
+            const displayText = document.getElementById('displayText');
+            let fontSize = parseInt(window.getComputedStyle(displayText).fontSize);
+            while (displayText.scrollWidth > displayText.offsetWidth || displayText.scrollHeight > displayText.offsetHeight) {
+                fontSize--;
+                displayText.style.fontSize = `${fontSize}px`;
+                if (fontSize <= 10) break; // Prevents font size from becoming too small
+            }
+        }
+
+        // Optional: Re-check on window resize for responsiveness
+        window.addEventListener('resize', resizeText);
+    </script>
+</body>
+</html>
