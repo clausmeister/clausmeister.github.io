@@ -10,30 +10,29 @@
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column; /* Stack children vertically */
-            justify-content: center; /* Center children vertically */
-            align-items: center; /* Center children horizontally */
-            background-color: #f0f0f0; /* Light grey background */
-            overflow: hidden; /* Prevent scrolling */
-            font-family: 'Fira Code', 'SF Mono', 'Roboto Mono', 'Consolas', 'Monaco', 'Lucida Console', monospace;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
         }
         h1, #clock {
-            flex: 1; /* Allow both elements to expand */
-            width: 100vw; /* Full viewport width */
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 0;
-            padding: 0 10px; /* Add some padding on the sides */
+            padding: 0 10px;
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
         }
         h1 {
-            font-size: calc(5vw + 2vh); /* Use calc() to dynamically adjust size */
-            flex: 2; /* Allocate more space to the main text */
+            font-size: calc(5vw + 2vh); /* Initial dynamic size */
         }
         #clock {
-            font-size: calc(2vw + 1vh); /* Smaller than h1, but still dynamic */
-            flex: 1; /* Less space than h1 */
-            color: #666; /* Darker font color for contrast */
+            font-size: calc(2vw + 1vh);
+            color: #666;
         }
     </style>
 </head>
@@ -43,20 +42,36 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const queryParams = new URLSearchParams(window.location.search);
-            const text = queryParams.get('text') || '???';
+            const text = queryParams.get('text') || 'use query param ?text=hello_world to display text';
             document.getElementById('displayText').textContent = text;
 
             function updateClock() {
                 const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const date = now.toLocaleDateString('de-DE', options);
                 const hours = now.getHours().toString().padStart(2, '0');
                 const minutes = now.getMinutes().toString().padStart(2, '0');
                 const seconds = now.getSeconds().toString().padStart(2, '0');
-                document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+                document.getElementById('clock').textContent = `${date} ${hours}:${minutes}:${seconds}`;
             }
-
             setInterval(updateClock, 1000);
             updateClock();
+
+            resizeText(); // Call resizeText to adjust the text size initially
         });
+
+        function resizeText() {
+            const displayText = document.getElementById('displayText');
+            let fontSize = parseInt(window.getComputedStyle(displayText).fontSize);
+            while (displayText.scrollWidth > displayText.offsetWidth || displayText.scrollHeight > displayText.offsetHeight) {
+                fontSize--;
+                displayText.style.fontSize = `${fontSize}px`;
+                if (fontSize <= 10) break; // Prevents font size from becoming too small
+            }
+        }
+
+        // Optional: Re-check on window resize for responsiveness
+        window.addEventListener('resize', resizeText);
     </script>
 </body>
 </html>
