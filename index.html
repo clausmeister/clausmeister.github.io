@@ -10,6 +10,7 @@
             padding: 0;
             height: 100%;
             display: flex;
+            flex-direction: column; /* Align items in a column */
             justify-content: center;
             align-items: center;
             background-color: #f0f0f0; /* Light grey background */
@@ -17,22 +18,38 @@
         h1 {
             font-size: 5vw; /* Responsive font size */
             text-align: center;
-            width: 100%;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        }
+        #clock {
+            font-size: 2vw; /* Smaller font size for the clock */
+            margin-top: 20px; /* Space between the text and the clock */
         }
     </style>
 </head>
 <body>
     <h1 id="displayText">Loading...</h1>
+    <div id="clock">00:00:00</div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const queryParams = new URLSearchParams(window.location.search);
             const text = queryParams.get('text') || '???';
             document.getElementById('displayText').textContent = text;
+
+            // Function to update the clock
+            function updateClock() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            }
+
+            // Update the clock every second
+            setInterval(updateClock, 1000);
+
+            // Initialize the clock immediately
+            updateClock();
         });
     </script>
 </body>
