@@ -15,6 +15,7 @@
             align-items: center;
             background-color: #f0f0f0;
             overflow: hidden;
+            font-family: 'Fira Code', 'SF Mono', 'Roboto Mono', 'Consolas', 'Monaco', 'Lucida Console', monospace;
         }
         h1, #clock {
             width: 100vw;
@@ -42,18 +43,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const queryParams = new URLSearchParams(window.location.search);
-            const text = queryParams.get('text') || 'use query param ?text=hello_world to display text';
+            const text = queryParams.get('text') || 'use query param `?text=hello_world` to display any text';
             document.getElementById('displayText').textContent = text;
 
             function updateClock() {
                 const now = new Date();
+                // Date formatting options
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const date = now.toLocaleDateString('de-DE', options);
+                const date = now.toLocaleDateString('de-DE', options); // Adjust the locale as needed
                 const hours = now.getHours().toString().padStart(2, '0');
                 const minutes = now.getMinutes().toString().padStart(2, '0');
                 const seconds = now.getSeconds().toString().padStart(2, '0');
-                document.getElementById('clock').textContent = `${date} ${hours}:${minutes}:${seconds}`;
+                // Updating the clock element with date and time, including a line break
+                document.getElementById('clock').innerHTML = `${date} <br> ${hours}:${minutes}:${seconds}`;
             }
+
             setInterval(updateClock, 1000);
             updateClock();
 
