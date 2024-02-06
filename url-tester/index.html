@@ -40,12 +40,14 @@
 <body>
     <h1 id="displayText">Loading...</h1>
     <div id="loadTime"></div>
+    <div id="elapsedTime">00:00:00 ago</div> <!-- New display for elapsed time -->
     <div id="clock">00:00:00</div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const queryParams = new URLSearchParams(window.location.search);
             const text = queryParams.get('text') || 'use query param `?text=hello_world` to display any text';
             document.getElementById('displayText').textContent = text;
+            const loadTime = new Date(); // Capture load time
 
             function getDateAndTimeString() {
                 const now = new Date();
@@ -56,16 +58,26 @@
                 const seconds = now.getSeconds().toString().padStart(2, '0');
                 return `${date} <br> ${hours}:${minutes}:${seconds}`;
             }
-            
-            // Display load time
-            document.getElementById('loadTime').textContent = `Page loaded on: ${getDateAndTimeString()}`;
+
+            document.getElementById('loadTime').innerHTML = `Page loaded on: ${getDateAndTimeString()}`;
+
+            function updateElapsed() {
+                const now = new Date();
+                const elapsed = new Date(now - loadTime);
+                const hours = elapsed.getUTCHours().toString().padStart(2, '0');
+                const minutes = elapsed.getMinutes().toString().padStart(2, '0');
+                const seconds = elapsed.getSeconds().toString().padStart(2, '0');
+                document.getElementById('elapsedTime').textContent = `${hours}:${minutes}:${seconds} ago`;
+            }
 
             function updateClock() {
                 document.getElementById('clock').innerHTML = getDateAndTimeString();
             }
 
             setInterval(updateClock, 1000);
+            setInterval(updateElapsed, 1000); // Update elapsed time every second
             updateClock();
+            updateElapsed(); // Initial update for elapsed time
             resizeText(); // Call resizeText to adjust the text size initially
         });
 
