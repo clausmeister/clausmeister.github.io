@@ -17,7 +17,7 @@
             overflow: hidden;
             font-family: 'Fira Code', 'SF Mono', 'Roboto Mono', 'Consolas', 'Monaco', 'Lucida Console', monospace;
         }
-        h1, #clock {
+        h1, #clock, #loadTime {
             width: 100vw;
             display: flex;
             justify-content: center;
@@ -31,7 +31,7 @@
         h1 {
             font-size: calc(5vw + 2vh); /* Initial dynamic size */
         }
-        #clock {
+        #clock, #loadTime {
             font-size: calc(2vw + 1vh);
             color: #666;
         }
@@ -39,6 +39,7 @@
 </head>
 <body>
     <h1 id="displayText">Loading...</h1>
+    <div id="loadTime"></div>
     <div id="clock">00:00:00</div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -46,21 +47,25 @@
             const text = queryParams.get('text') || 'use query param `?text=hello_world` to display any text';
             document.getElementById('displayText').textContent = text;
 
-            function updateClock() {
+            function getDateAndTimeString() {
                 const now = new Date();
-                // Date formatting options
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const date = now.toLocaleDateString('de-DE', options); // Adjust the locale as needed
+                const date = now.toLocaleDateString('de-DE', options);
                 const hours = now.getHours().toString().padStart(2, '0');
                 const minutes = now.getMinutes().toString().padStart(2, '0');
                 const seconds = now.getSeconds().toString().padStart(2, '0');
-                // Updating the clock element with date and time, including a line break
-                document.getElementById('clock').innerHTML = `${date} <br> ${hours}:${minutes}:${seconds}`;
+                return `${date} <br> ${hours}:${minutes}:${seconds}`;
+            }
+            
+            // Display load time
+            document.getElementById('loadTime').textContent = `Page loaded on: ${getDateAndTimeString()}`;
+
+            function updateClock() {
+                document.getElementById('clock').innerHTML = getDateAndTimeString();
             }
 
             setInterval(updateClock, 1000);
             updateClock();
-
             resizeText(); // Call resizeText to adjust the text size initially
         });
 
@@ -74,7 +79,6 @@
             }
         }
 
-        // Optional: Re-check on window resize for responsiveness
         window.addEventListener('resize', resizeText);
     </script>
 </body>
